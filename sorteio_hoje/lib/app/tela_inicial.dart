@@ -1,13 +1,31 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:sorteio_hoje/app/tela_resultado.dart';
 
 class TelaInicial extends StatelessWidget {
   const TelaInicial({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final quantnumEC = TextEditingController(text: '1');
-    final minEC = TextEditingController(text: '0');
-    final maxEC = TextEditingController(text: '400');
+    final quantnumEC = TextEditingController();
+    final minEC = TextEditingController();
+    final maxEC = TextEditingController();
+
+    int numeroAle({required int min, required int max}) =>
+        min + Random().nextInt(max - min + 1);
+
+    List<int> listaNumeros(int quantidade,
+        {required int min, required int max}) {
+      final numeros = Set<int>();
+
+      while (numeros.length < quantidade) {
+        final numero = numeroAle(min: min, max: max);
+        numeros.add(numero);
+      }
+      return List.of(numeros);
+    }
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(26),
@@ -33,15 +51,16 @@ class TelaInicial extends StatelessWidget {
                       controller: quantnumEC,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
+                          hintText: 'Quantiade',
                           enabledBorder: OutlineInputBorder(
                             borderSide:
                                 BorderSide(width: 3, color: Colors.orange),
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                                 width: 3, color: Colors.orangeAccent),
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(8),
                           ))),
                 ),
                 SizedBox(width: 10),
@@ -70,15 +89,16 @@ class TelaInicial extends StatelessWidget {
                             controller: minEC,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
+                                hintText: 'Mínimo',
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                       width: 3, color: Colors.orange),
-                                  borderRadius: BorderRadius.circular(15),
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                       width: 3, color: Colors.orangeAccent),
-                                  borderRadius: BorderRadius.circular(15),
+                                  borderRadius: BorderRadius.circular(8),
                                 ))),
                       ),
                     ],
@@ -99,21 +119,51 @@ class TelaInicial extends StatelessWidget {
                             controller: maxEC,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
+                                hintText: 'Máximo',
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                       width: 3, color: Colors.orange),
-                                  borderRadius: BorderRadius.circular(15),
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                       width: 3, color: Colors.orangeAccent),
-                                  borderRadius: BorderRadius.circular(15),
+                                  borderRadius: BorderRadius.circular(8),
                                 ))),
                       ),
                     ],
                   ),
                 ),
               ],
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            SizedBox(
+              height: 50,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.orange,
+                  elevation: 0,
+                ),
+                onPressed: () {
+                  if (int.parse(quantnumEC.text) <=
+                      int.parse(maxEC.text) - int.parse(minEC.text)) {
+                    final lista = listaNumeros(int.parse(quantnumEC.text),
+                        min: int.parse(minEC.text), max: int.parse(maxEC.text));
+                    abrirDiaolgo(context, lista);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        duration: Duration(seconds: 4),
+                        content: Text(
+                            'Numeros digitados são inválidos, verifique se a quantidade é menor ou igual ao intervalo de numeros sortados')));
+                  }
+                },
+                child: Text(
+                  'Sortear!',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
             ),
           ],
         ),

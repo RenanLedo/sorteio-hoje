@@ -13,11 +13,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Sorteio Hoje',
       theme: ThemeData(
-        
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.orange,
       ),
       home: TelaInicial(),
     );
   }
 }
-
